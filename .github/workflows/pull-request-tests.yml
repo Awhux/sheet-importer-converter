@@ -9,6 +9,11 @@ jobs:
     build-and-test:
         runs-on: ubuntu-latest
 
+        permissions:
+            contents: read
+            pull-requests: write
+            issues: write
+
         steps:
             - name: Checkout repository
               uses: actions/checkout@v3
@@ -20,14 +25,6 @@ jobs:
               run: |
                   sudo apt-get update
                   sudo apt-get install -y g++ cmake build-essential
-
-            - name: Create build directories
-              run: |
-                  mkdir -p build
-                  mkdir -p build/tests
-                  mkdir -p build/gtest
-                  mkdir -p build/OpenXLSX
-                  mkdir -p out
 
             - name: Build project
               run: make
