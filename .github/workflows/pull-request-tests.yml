@@ -18,20 +18,6 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install -y g++ cmake build-essential
 
-            - name: Build Google Test
-              run: |
-                  mkdir -p build/gtest
-                  cd build/gtest
-                  cmake ../../external/googletest -DCMAKE_BUILD_TYPE=Release
-                  make
-
-            - name: Build OpenXLSX
-              run: |
-                  mkdir -p build/OpenXLSX
-                  cd build/OpenXLSX
-                  cmake ../../external/OpenXLSX -DCMAKE_BUILD_TYPE=Release -DOPENXLSX_BUILD_SAMPLES=OFF -DOPENXLSX_BUILD_TESTS=OFF
-                  make
-
             - name: Build project
               run: make all
 
