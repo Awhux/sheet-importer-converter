@@ -24,6 +24,7 @@
 build/
 bin/
 obj/
+out/
 
 # IDE-specific files
 .vscode/
