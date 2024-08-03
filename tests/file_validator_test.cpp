@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 #include "../src/file_validator.hpp"
 
-// TEST(FileValidatorTest, ValidateValidFile)
-// {
-//     EXPECT_TRUE(FileValidator::validate("test_files/valid.xlsx"));
-// }
+TEST(FileValidatorTest, ValidateValidFile)
+{
+    EXPECT_TRUE(FileValidator::validate("test_files/valid.xlsx"));
+}
 
 TEST(FileValidatorTest, ValidateInvalidFile)
 {

@@ -40,9 +40,10 @@ jobs:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   script: |
                       const runId = context.runId;
+                      console.log(context.job.status);
                         const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${runId}`;
-                        const testStatus = context.job.status === 'success' ? '✅' : '❌';
-                        const conclusion = context.job.status === 'success' ? 'All tests passed successfully!' : 'Some tests failed. Please check the logs for more details.';
+                        const testStatus = context.job.status == 'success' ? '✅' : '❌';
+                        const conclusion = context.job.status == 'success' ? 'All tests passed successfully!' : 'Some tests failed. Please check the logs for more details.';
                         const logsLink = `[View logs](${runUrl})`;
                         let body = `
                         ### Test Results
