@@ -44,7 +44,6 @@ lib/
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
-Makefile
 
 # Debugging files
 *.dSYM/
