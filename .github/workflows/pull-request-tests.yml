@@ -48,14 +48,14 @@ jobs:
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   script: |
-                      const { runNumber, runId } = context.run;
+                      const runId = process.env.GITHUB_RUN_ID;
                       const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${runId}`;
                       const testStatus = steps['run-tests'].outcome === 'success' ? '✅' : '❌';
                       const conclusion = steps['run-tests'].outcome === 'success' ? 'All tests passed successfully!' : 'Some tests failed. Please check the logs for more details.';
                       const logsLink = `[View logs](${runUrl})`;
 
                       let body = `
-                      ### Test Results for Run #${runNumber}
+                      ### Test Results
 
                       **Status:** ${testStatus}
 
