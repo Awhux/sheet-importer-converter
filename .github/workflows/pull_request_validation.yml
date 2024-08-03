@@ -1,0 +1,51 @@
+name: Validate Pull Request
+
+on:
+    pull_request:
+        types: [opened, edited, synchronize]
+
+jobs:
+    validate-pr:
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: read
+            pull-requests: write
+            issues: write
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Validate PR
+              id: validate
+              run: |
+                  if ! grep -q "## Description" $GITHUB_EVENT_PATH; then
+                    echo "Missing Description section in the pull request."
+                    exit 1
+                  fi
+                  if ! grep -q "## Type of change" $GITHUB_EVENT_PATH; then
+                    echo "Missing Type of change section in the pull request."
+                    exit 1
+                  fi
+                  if ! grep -q "## How Has This Been Tested?" $GITHUB_EVENT_PATH; then
+                    echo "Missing How Has This Been Tested? section in the pull request."
+                    exit 1
+                  fi
+                  if ! grep -q "## Checklist" $GITHUB_EVENT_PATH; then
+                    echo "Missing Checklist section in the pull request."
+                    exit 1
+                  fi
+
+            - name: Create PR comment on failure
+              if: failure()
+              uses: actions/github-script@v6
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  script: |
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: "❌ The pull request does not meet the required template structure. Please fill out all sections."
+                      })

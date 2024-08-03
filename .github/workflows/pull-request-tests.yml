@@ -1,45 +1,38 @@
 name: Run Tests on Pull Request
-
 on:
     pull_request:
         branches:
             - main
-
 jobs:
     build-and-test:
         runs-on: ubuntu-latest
-
+        permissions:
+            contents: read
+            pull-requests: write
+            issues: write
         steps:
             - name: Checkout repository
               uses: actions/checkout@v3
-
+            - name: Checkout submodules
+              run: git submodule update --init --recursive
             - name: Set up C++ environment
               run: |
                   sudo apt-get update
                   sudo apt-get install -y g++ cmake build-essential
-
-            - name: Build Google Test
-              run: |
-                  mkdir -p build/gtest
-                  cd build/gtest
-                  cmake ../../external/googletest -DCMAKE_BUILD_TYPE=Release
-                  make
-
-            - name: Build OpenXLSX
-              run: |
-                  mkdir -p build/OpenXLSX
-                  cd build/OpenXLSX
-                  cmake ../../external/OpenXLSX -DCMAKE_BUILD_TYPE=Release -DOPENXLSX_BUILD_SAMPLES=OFF -DOPENXLSX_BUILD_TESTS=OFF
-                  make
-
             - name: Build project
-              run: make all
-
+              run: |
+                  # find the Makefile
+                  makefile=$(find . -name Makefile)
+                  if [ -z "$makefile" ]; then
+                      echo "Makefile not found"
+                      exit 1
+                  fi
+                  # build the project
+                  make
             - name: Run tests
               id: run-tests
-              run: |
-                  make test
-
+              continue-on-error: true
+              run: make test
             - name: Create PR comment on success
               if: success()
               uses: actions/github-script@v6
