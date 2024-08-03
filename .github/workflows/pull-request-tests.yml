@@ -21,13 +21,20 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install -y g++ cmake build-essential
 
+            - name: Create build directories
+              run: |
+                  mkdir -p build
+                  mkdir -p build/tests
+                  mkdir -p build/gtest
+                  mkdir -p build/OpenXLSX
+                  mkdir -p out
+
             - name: Build project
               run: make
 
             - name: Run tests
               id: run-tests
-              run: |
-                  make test
+              run: make test
 
             - name: Create PR comment on success
               if: success()
