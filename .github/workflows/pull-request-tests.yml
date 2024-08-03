@@ -1,0 +1,65 @@
+name: Run Tests on Pull Request
+
+on:
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    build-and-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Set up C++ environment
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y g++ cmake build-essential
+
+            - name: Build Google Test
+              run: |
+                  mkdir -p build/gtest
+                  cd build/gtest
+                  cmake ../../external/googletest -DCMAKE_BUILD_TYPE=Release
+                  make
+
+            - name: Build OpenXLSX
+              run: |
+                  mkdir -p build/OpenXLSX
+                  cd build/OpenXLSX
+                  cmake ../../external/OpenXLSX -DCMAKE_BUILD_TYPE=Release -DOPENXLSX_BUILD_SAMPLES=OFF -DOPENXLSX_BUILD_TESTS=OFF
+                  make
+
+            - name: Build project
+              run: make all
+
+            - name: Run tests
+              id: run-tests
+              run: |
+                  make test
+
+            - name: Create PR comment on success
+              if: success()
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: "✅ Tests passed successfully!"
+                      })
+
+            - name: Create PR comment on failure
+              if: failure()
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: "❌ Tests failed. Please check the logs."
+                      })
